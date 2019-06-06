@@ -1,1 +1,3 @@
+#adding proxy
+curl -k -u admin:password https://localhost:8089/services/server/httpsettings/proxysettings -d name="proxyConfig"
 curl -k -u admin:password https://localhost:8089/services/server/httpsettings/proxysettings/proxyConfig -d no_proxy="test"
