@@ -13,6 +13,11 @@ index=_internal sourcetype=splunkd group=tcpin_connections (connectionType=cooke
 | addcoltotals "Traffic(GB)"
 
 #Forwarders connecting directly to indexer, both UF and HF
-index=_internal host=indexer* source=*metrics.log group=tcpin_connections hostname 
-| stats values(os) as os values(version) as version values(hostname) as hostname values(guid) as guid values(fwdType) as fwdType values(ssl) as ssl values(connectionType) as connectionType by sourceIp 
+index=_internal source=*metrics.log group=tcpin_connections 
+    [ search index=_internal splunk_server=* earliest=-5m 
+    | dedup splunk_server 
+    | eval host=splunk_server 
+    | fields host 
+    | format] 
+| stats values(os) as os values(version) as version values(hostname) as hostname values(guid) as guid values(fwdType) as fwdType values(ssl) as ssl values(connectionType) as connectionType by sourceIp
 
