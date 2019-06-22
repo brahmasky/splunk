@@ -38,7 +38,9 @@ def is_splunk_forwarder(path):
     matcher = pat.match(path)
     return matcher    
 
-def search_transforms_routing(config, list):
+def search_transforms_routing(file):
+    list = []
+    config = read_file(file)
     for each_section in config.sections():
         for (each_key, each_val) in config.items(each_section):
             if (each_key == 'DEST_KEY' and each_val == '_TCP_ROUTING'):
@@ -100,10 +102,8 @@ def update_hf_files(rootdir):
                     comment_outputs_tcpout(outputs_file)
                 if file == "transforms.conf":
                     transforms_file = os.path.join(subdir, file)
-                    transforms_config = read_file(transforms_file)
-
                     routing_list = []
-                    routing_list = search_transforms_routing(transforms_config, routing_list)
+                    routing_list = search_transforms_routing(transforms_file)
 
                     if len(routing_list) > 0: 
                         props_file = os.path.join(subdir, "props.conf")
