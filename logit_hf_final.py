@@ -137,11 +137,15 @@ def update_local_output(splunk_home):
     new_output = '{}/apps/cba_output/local/outputs.conf'.format(splunk_home)
 
     # copy non-tcpout section to new outputs
-    copy_outputs(sytem_local_output, new_output)
+    copied = copy_outputs(sytem_local_output, new_output)
     # comment out all tcpout sections in system local
-    comment_outputs_tcpout(sytem_local_output)
-    return True
+    commented = comment_outputs_tcpout(sytem_local_output)
+    
+    return copied and commented
 
+def copy_new_apps():
+
+    return True
 
 # === main flow ===
 
