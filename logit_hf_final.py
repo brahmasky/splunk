@@ -187,4 +187,4 @@ if host_type == 'LOCAL_HF':
     ...
     # process $SPLUNK_HOME/etc/system/local/outputs.conf file
     update_local_output(splunk_home) 
-
+    
