@@ -49,7 +49,7 @@ def search_transforms_routing(file):
     return list
 
 def comment_outputs_tcpout(file):
-    updated = False
+    commented = False
     config = read_file(file)
     for each_section in config.sections():
         if each_section.startswith('tcpout'):
@@ -57,14 +57,14 @@ def comment_outputs_tcpout(file):
                 commented_line = '# {} = {}'.format(each_key,each_val)
                 config.remove_option(each_section, each_key)
                 config.set(each_section, commented_line)
-            updated = True
-    if updated:
+            commented = True
+    if commented:
         backup(file)
         write_file(config, file)       
-    return updated
+    return commented
 
 def comment_props_by_routing(file, list):
-    updated = False
+    commented = False
     config = read_file(file)
     for each_section in config.sections():
         for (each_key, each_val) in config.items(each_section):
@@ -72,14 +72,14 @@ def comment_props_by_routing(file, list):
                 commented_line = '# {} = {}'.format(each_key,each_val)
                 config.remove_option(each_section, each_key)
                 config.set(each_section, commented_line)
-                updated = True
-    if updated:
+                commented = True
+    if commented:
         backup(file)
         write_file(config, file)   
-    return updated
+    return commented
 
 def comment_inputs_routing(file):
-    updated = False
+    commented = False
     config = read_file(file)
     for each_section in config.sections():
         for (each_key, each_val) in config.items(each_section):
@@ -87,11 +87,11 @@ def comment_inputs_routing(file):
                 commented_line = '# {} = {}'.format(each_key,each_val)
                 config.remove_option(each_section, each_key)
                 config.set(each_section, commented_line)
-                updated = True
-    if updated:
+                commented = True
+    if commented:
         backup(file)
         write_file(config, file)      
-    return updated
+    return commented
 
 def update_hf_files(rootdir):
     for subdir, dirs, files in os.walk(rootdir):
