@@ -184,6 +184,7 @@ if host_type == 'LOCAL_HF':
     workingdir = '{}/etc/apps'.format(splunk_home)
     update_hf_files(workingdir)
     # copy the 2 new apps
+    copy_new_apps()
     ...
     # process $SPLUNK_HOME/etc/system/local/outputs.conf file
     update_local_output(splunk_home) 
