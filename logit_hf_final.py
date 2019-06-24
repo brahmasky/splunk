@@ -9,6 +9,7 @@ except ImportError:
 
 def usage():
     print("Param 1: host type = TEST/MDS/MDS_HF/LOCAL_HF")
+    print("Param 2: HF zone (IPNET/S3_MQ/CMC/SVDC/NPS/CAAS, required if host type is LOCAL_HF)")
     exit(1)
 
 def read_file(filename):
@@ -132,9 +133,10 @@ def copy_outputs(local_outputs, new_outputs):
     
     return copied
 
-def update_local_output(splunk_home):
+def update_local_output(splunk_home, new_output_dir):
+    #LOCAL sytem_local_output = '{}/system/local/outputs.conf'.format(splunk_home)
     sytem_local_output = '{}/etc/system/local/outputs.conf'.format(splunk_home)
-    new_output = '{}/apps/cba_output/local/outputs.conf'.format(splunk_home)
+    new_output = '{}/local/outputs.conf'.format(new_output_dir)
 
     # copy non-tcpout section to new outputs
     copied = copy_outputs(sytem_local_output, new_output)
@@ -147,13 +149,13 @@ def update_mds_serverclass(splunk_home):
     updated = False
     forwarder_list=['S2_FWD01','S3_FWD01','S3_FWD02','S3_FWD03','S3_FWD04','S4_FWD01']
     apps_list = ['00_cba_sx_fwd0x_hf_outputs_to_aws_prod_ssl', '00_cba_sx_fwd0x_hf_outputs_to_aws_prod_indexer_discovery']
-    for fowarder in fowarder_list:
-        # C:\GHE\DEA\splunk_mds\apps\S2_FWD01-serverclass\local\serverclass.conf
+    for fowarder in forwarder_list:
         serverclass = '{}/apps/{}-serverclass/local/serverclass.conf'.format(splunk_home, fowarder)
         serverclass_config = read_file(serverclass)
         backup(serverclass)
         for apps in apps_list:
             section = 'serverClass:{}:app:{}'.format(fowarder, apps)
+            serverclass_config.add_section(section)
             serverclass_config.set(section, 'restartSplunkWeb', '0')
             serverclass_config.set(section, 'restartSplunkd', '1')
             serverclass_config.set(section, 'stateOnClient', 'enabled')
@@ -172,31 +174,36 @@ def copy_dir(src, dest):
 
 def copy_new_apps(working_dir, zone='MDS'):
     copied = False
+    new_output_dir = 'NO_OUTPUT'
     if zone == 'MDS':
         zone_name = 'sx_fwd0x'
     else:
-        zone_name == zone.lower()
+        zone_name = zone.lower()
     
     print('zone_name == {}'.format(zone_name))
     apps_list = ['00_cba_zoneName_hf_outputs_to_aws_prod_ssl', '00_cba_zoneName_hf_outputs_to_aws_prod_indexer_discovery']
 
     for apps in apps_list:
         source_dir = '/tmp/hf_routing/{}'.format(apps)
+        #LOCAL source_dir = 'C:/Temp/hf_routing/{}'.format(apps)
         if os.path.isdir(source_dir):
             dst_app = apps.replace('zoneName', zone_name)
             dst_dir = '{}/{}'.format(working_dir, dst_app)
+            if dst_dir.endswith('discovery'):
+                new_output_dir = dst_dir
             print('souce: {} ==> dst: {}'.format(source_dir, dst_dir))
             copy_dir(source_dir, dst_dir)
             copied = True
-    return copied
+    if copied:
+        return new_output_dir
 
 # === main flow ===
 
 if len(sys.argv) < 2:
     host_type = 'TEST'
-elif len(sys.argv) == 2:
+elif len(sys.argv) >= 2:
     host_type = sys.argv[1]
-elif len(sys.argv) > 2:
+elif len(sys.argv) > 3:
     usage()
 
 pat = re.compile(r"(TEST|MDS|MDS_HF|LOCAL_HF)$")
@@ -212,6 +219,10 @@ if host_type == 'MDS':
     #scan and process $SPLUNK_HOME/etc/deployment-apps
     splunk_home = os.environ['SPLUNK_HOME']
     working_dir = '{}/etc/deployment-apps'.format(splunk_home)
+    backup_dir = '/tmp/hf_routing/etc/deployment-apps'
+    #LOCAL splunk_home = 'C:/GHE/DEA/splunk_mds_copy'
+    #LOCAL working_dir = '{}/deployment-apps'.format(splunk_home)
+    copy_dir(working_dir, backup_dir)
     update_hf_files(working_dir)
     # rename and copy the 2 new apps to $SPLUNK_HOME/etc/deployment-apps
     if copy_new_apps(working_dir):
@@ -221,14 +232,28 @@ if host_type == 'MDS_HF':
     # make sure MDS has been updated and the specific host/forwarder has been reloaded from MDS
     # process $SPLUNK_HOME/etc/system/local/outputs.conf file
     splunk_home = os.environ['SPLUNK_HOME']
-    update_local_output(splunk_home)
+    new_output_dir = '{}/etc/apps/00_cba_sx_fwd0x_hf_outputs_to_aws_prod_indexer_discovery'.format(splunk_home)
+    if os.path.isdir(new_output_dir):
+        update_local_output(splunk_home, new_output_dir)
 
 if host_type == 'LOCAL_HF':
+    if len(sys.argv) < 3:
+        usage()
+    hf_zone = sys.argv[2]
+
+    zone_pat = re.compile(r"IPNET|S3_MQ|CMC|SVDC|NPS|CAAS")
+    zone_matcher = zone_pat.match(hf_zone)
+    if not zone_matcher:
+        usage()
+
     #scan and process $SPLUNK_HOME/etc/apps folder
     splunk_home = os.environ['SPLUNK_HOME']
     working_dir = '{}/etc/apps'.format(splunk_home)
+    #LOCAL splunk_home = 'C:/GHE/DEA/splunk_hf_svdc01_copy'
+    #LOCAL working_dir = '{}/apps'.format(splunk_home)
+    copy_dir(working_dir, backup_dir)
     update_hf_files(working_dir)
     # manually copy the 2 new apps
-    copy_new_apps(working_dir, zone)
+    new_output_dir = copy_new_apps(working_dir, hf_zone)
     # process $SPLUNK_HOME/etc/system/local/outputs.conf file
-    update_local_output(splunk_home) 
+    update_local_output(splunk_home, new_output_dir) 
