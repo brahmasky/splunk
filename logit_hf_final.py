@@ -1,4 +1,4 @@
-import re, sys, shutil, os, subprocess
+import re, sys, shutil, os, errno
 from datetime import datetime
 
 try:
@@ -143,9 +143,52 @@ def update_local_output(splunk_home):
     
     return copied and commented
 
-def copy_new_apps():
+def update_mds_serverclass(splunk_home):
+    updated = False
+    forwarder_list=['S2_FWD01','S3_FWD01','S3_FWD02','S3_FWD03','S3_FWD04','S4_FWD01']
+    apps_list = ['00_cba_sx_fwd0x_hf_outputs_to_aws_prod_ssl', '00_cba_sx_fwd0x_hf_outputs_to_aws_prod_indexer_discovery']
+    for fowarder in fowarder_list:
+        # C:\GHE\DEA\splunk_mds\apps\S2_FWD01-serverclass\local\serverclass.conf
+        serverclass = '{}/apps/{}-serverclass/local/serverclass.conf'.format(splunk_home, fowarder)
+        serverclass_config = read_file(serverclass)
+        backup(serverclass)
+        for apps in apps_list:
+            section = 'serverClass:{}:app:{}'.format(fowarder, apps)
+            serverclass_config.set(section, 'restartSplunkWeb', '0')
+            serverclass_config.set(section, 'restartSplunkd', '1')
+            serverclass_config.set(section, 'stateOnClient', 'enabled')
+        write_file(serverclass_config, serverclass)
 
-    return True
+
+def copy_dir(src, dest):
+    try:
+        shutil.copytree(src, dest)
+    except OSError as e:
+        # If the error was caused because the source wasn't a directory
+        if e.errno == errno.ENOTDIR:
+            shutil.copy(src, dest)
+        else:
+            print('Directory not copied. Error: %s' % e)
+
+def copy_new_apps(working_dir, zone='MDS'):
+    copied = False
+    if zone == 'MDS':
+        zone_name = 'sx_fwd0x'
+    else:
+        zone_name == zone.lower()
+    
+    print('zone_name == {}'.format(zone_name))
+    apps_list = ['00_cba_zoneName_hf_outputs_to_aws_prod_ssl', '00_cba_zoneName_hf_outputs_to_aws_prod_indexer_discovery']
+
+    for apps in apps_list:
+        source_dir = '/tmp/hf_routing/{}'.format(apps)
+        if os.path.isdir(source_dir):
+            dst_app = apps.replace('zoneName', zone_name)
+            dst_dir = '{}/{}'.format(working_dir, dst_app)
+            print('souce: {} ==> dst: {}'.format(source_dir, dst_dir))
+            copy_dir(source_dir, dst_dir)
+            copied = True
+    return copied
 
 # === main flow ===
 
@@ -163,15 +206,17 @@ if not matcher:
 
 if host_type == 'TEST':
     #scan a local repo and process all the relevant files
-    workingdir = 'C:/GHE/DEA/splunk_mds_copy/deployment-apps'
-    update_hf_files(workingdir)
+    working_dir = 'C:/GHE/DEA/splunk_mds_copy/deployment-apps'
+    update_hf_files(working_dir)
 if host_type == 'MDS':
     #scan and process $SPLUNK_HOME/etc/deployment-apps
     splunk_home = os.environ['SPLUNK_HOME']
-    workingdir = '{}/etc/deployment-apps'.format(splunk_home)
-    update_hf_files(workingdir)
-    # rename and copy the 2 new apps for all FWDs (S2/S3/S4)
-    ...
+    working_dir = '{}/etc/deployment-apps'.format(splunk_home)
+    update_hf_files(working_dir)
+    # rename and copy the 2 new apps to $SPLUNK_HOME/etc/deployment-apps
+    if copy_new_apps(working_dir):
+        #if copy is successful, update serverclass for all forwarders
+        update_mds_serverclass(splunk_home)
 if host_type == 'MDS_HF':
     # make sure MDS has been updated and the specific host/forwarder has been reloaded from MDS
     # process $SPLUNK_HOME/etc/system/local/outputs.conf file
@@ -181,11 +226,9 @@ if host_type == 'MDS_HF':
 if host_type == 'LOCAL_HF':
     #scan and process $SPLUNK_HOME/etc/apps folder
     splunk_home = os.environ['SPLUNK_HOME']
-    workingdir = '{}/etc/apps'.format(splunk_home)
-    update_hf_files(workingdir)
-    # copy the 2 new apps
-    copy_new_apps()
-    ...
+    working_dir = '{}/etc/apps'.format(splunk_home)
+    update_hf_files(working_dir)
+    # manually copy the 2 new apps
+    copy_new_apps(working_dir, zone)
     # process $SPLUNK_HOME/etc/system/local/outputs.conf file
     update_local_output(splunk_home) 
-    
