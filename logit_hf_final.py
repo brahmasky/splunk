@@ -301,13 +301,14 @@ if host_type == 'TEST':
     working_dir = 'C:/GHE/DEA/splunk_mds_copy/deployment-apps'
     update_hf_files(working_dir)
 if host_type == 'MDS':
+    check_apps_in_temp()
     #scan and process $SPLUNK_HOME/etc/deployment-apps
     splunk_home = os.environ['SPLUNK_HOME']
     backup_dir = backup_splunk(splunk_home, host_type.lower())
 
     if testing:
         splunk_home = backup_dir
-    check_apps_in_temp()
+
     working_dir = '{}/etc/deployment-apps'.format(splunk_home)
     update_hf_files(working_dir)
     # rename and copy the 2 new apps to $SPLUNK_HOME/etc/deployment-apps
