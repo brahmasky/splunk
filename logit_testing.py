@@ -172,7 +172,6 @@ def update_mds_serverclass(splunk_home):
 
 
 
-    return backuped
 
 def copy_dir(src, dest):
     try:
@@ -279,6 +278,8 @@ def backup_splunk(splunk_home, backup_dir):
             backup_conf(src_dir, dst_dir)
             backuped = True
 
+    return backuped
+
 # === main flow ===
 if len(sys.argv) < 2:
     host_type = 'TEST'
@@ -303,8 +304,9 @@ testing = True
 
 if host_type == 'TEST':
     #scan a local repo and process all the relevant files
-    splunk_home = 'C:/GHE/DEA/splunk_mds/deployment-apps'
+    splunk_home = 'C:/GHE/DEA/splunk_mds/'
     
+    working_dir = '{}/etc/deployment-apps'.format(splunk_home)
     update_hf_files(working_dir)
 if host_type == 'MDS':
     check_apps_in_temp()
