@@ -1,20 +1,35 @@
-import re, sys, shutil, os, errno, fnmatch, getpass
+import re, sys, shutil, os, errno, fnmatch, getpass, codecs, tempfile
 from os.path import isdir, join
 from datetime import datetime
 
 try:
-    from configparser import ConfigParser
-    from configparser import RawConfigParser
-    from configparser import MissingSectionHeaderError
+    from configparser import ConfigParser, RawConfigParser, MissingSectionHeaderError
 except ImportError:
-    from ConfigParser import ConfigParser
-    from ConfigParser import RawConfigParser
-    from ConfigParser import MissingSectionHeaderError
+    from ConfigParser import ConfigParser, RawConfigParser, MissingSectionHeaderError
 
 def usage():
     print("Param 1: host type = TEST/MDS/MDS_HF/LOCAL_HF")
     print("Param 2: HF zone (IPNET/S3_MQ/CMC/SVDC/NPS/CAAS, required if host type is LOCAL_HF)")
     exit(1)
+
+def replace_file_encoding(filename):
+    replaced = False
+    temp_file = '{}.tmp'.format(filename)
+    with codecs.open(filename, 'r', encoding='utf-8-sig') as infile, codecs.open(temp_file, 'w+', encoding='utf-8') as outfile:
+        for line in infile:
+            outfile.write(line)
+
+    infile.close()
+    outfile.close()
+    if os.path.isfile(temp_file):
+        backup(filename)
+        os.remove(filename)
+        shutil.move(temp_file, filename)
+        replaced = True
+    
+    return True
+
+
 
 def read_file(filename):
     try:
@@ -26,8 +41,13 @@ def read_file(filename):
     try:
         config.read(filename)
     except MissingSectionHeaderError:
-        config.read(filename, encoding='utf-8-sig')
         print('ConfigParser is reading UTF-8-BOM file : {}'.format(filename))
+        try:
+            config.read(filename, encoding='utf-8-sig')
+        except TypeError:
+            replace_file_encoding(filename)
+            config.read(filename)
+
     return config
 
 def write_file(config, filename):
@@ -37,9 +57,10 @@ def write_file(config, filename):
 
 def backup(filename):
     now = datetime.now()
-    new_name = '{}.{}'.format(filename, now.strftime('%Y%d%m%H%M%S'))
+    new_name = '{}.{}'.format(filename, now.strftime('%Y%m%d%H%M%S'))
     print('Backing up {} to {}'.format(filename, new_name))
     shutil.copy(filename, new_name)
+    return new_name
 
 def is_splunk_forwarder(path):
     matcher = False
@@ -171,8 +192,6 @@ def update_mds_serverclass(splunk_home):
     return updated
 
 
-
-
 def copy_dir(src, dest):
     try:
         shutil.copytree(src, dest)
@@ -194,7 +213,7 @@ def copy_new_apps(working_dir, zone='MDS'):
     apps_list = ['00_cba_zoneName_hf_outputs_to_aws_prod_ssl', '00_cba_zoneName_hf_outputs_to_aws_prod_indexer_discovery']
 
     for apps in apps_list:
-        source_dir = '/tmp/hf_routing/{}'.format(apps)
+        source_dir = '{}/{}'.format(temp_dir, apps)
         if os.path.isdir(source_dir):
             dst_app = apps.replace('zoneName', zone_name)
             dst_dir = '{}/{}'.format(working_dir, dst_app)
@@ -235,16 +254,12 @@ def include_patterns(*patterns):
     https://stackoverflow.com/questions/35155382/copying-specific-files-to-a-new-folder-while-maintaining-the-original-subdirect
     Function that can be used as shutil.copytree() ignore parameter that
     determines which files *not* to ignore, the inverse of "normal" usage.
-
     This is a factory function that creates a function which can be used as a
     callable for copytree()'s ignore argument, *not* ignoring files that match
     any of the glob-style patterns provided.
-
     'patterns' are a sequence of pattern strings used to identify the files to
     include when copying the directory tree.
-
     Example usage:
-
         copytree(src_directory, dst_directory,
                  ignore=include_patterns('*.sldasm', '*.sldprt'))
     """
@@ -272,7 +287,8 @@ def backup_splunk(splunk_home, backup_dir):
     backuped = False
     relevant_dirs=['deployment-apps', 'apps', 'system/local']
     for dir in relevant_dirs:
-        src_dir = '{}/etc/{}'.format(splunk_home, dir)
+        #LOCAL src_dir = '{}/etc/{}'.format(splunk_home, dir)
+        src_dir = '{}/{}'.format(splunk_home, dir)
         if os.path.isdir(src_dir):
             dst_dir = '{}/etc/{}'.format(backup_dir, dir)
             backup_conf(src_dir, dst_dir)
@@ -296,18 +312,33 @@ elif len(sys.argv) > 3:
 
 
 user = getpass.getuser()
-temp_dir = '/tmp/{}/hf_routing'.format(user)
+if os.name == 'posix':
+    temp_dir = '/tmp/hf_routing'
+    if user != 'splunk':
+        temp_dir = '/tmp/{}/hf_routing'.format(user)
 if os.name == 'nt':
-    temp_dir = 'C:/Temp/{}/hf_routing'.format(user)
+    temp_dir = 'C:/Temp/hf_routing'
 
 testing = True
 
 if host_type == 'TEST':
     #scan a local repo and process all the relevant files
-    splunk_home = 'C:/GHE/DEA/splunk_mds/'
-    
-    working_dir = '{}/etc/deployment-apps'.format(splunk_home)
+    splunk_home = 'C:/GHE/DEA/splunk_svdc02_manual'
+    backup_dir = '{}/{}'.format(temp_dir, host_type.lower())
+    check_apps_in_temp()
+
+    print('backup_dir = {}'.format(backup_dir))
+    backup_splunk(splunk_home, backup_dir)
+    #test is going to be worked on backuped files
+    working_dir = '{}/etc/apps'.format(backup_dir)
     update_hf_files(working_dir)
+
+    new_output_dir = copy_new_apps(working_dir, 'SVDC')
+        #if copy is successful, update serverclass for all forwarders
+    #update_mds_serverclass(backup_dir)
+    # process $SPLUNK_HOME/etc/system/local/outputs.conf file
+    update_local_output(backup_dir, new_output_dir)
+
 if host_type == 'MDS':
     check_apps_in_temp()
     #scan and process $SPLUNK_HOME/etc/deployment-apps
@@ -323,10 +354,16 @@ if host_type == 'MDS':
     if copy_new_apps(working_dir):
         #if copy is successful, update serverclass for all forwarders
         update_mds_serverclass(splunk_home)
+
 if host_type == 'MDS_HF':
     # make sure MDS has been updated and the specific host/forwarder has been reloaded from MDS
     # process $SPLUNK_HOME/etc/system/local/outputs.conf file
     splunk_home = os.environ['SPLUNK_HOME']
+    backup_dir = '{}/{}'.format(temp_dir, host_type.lower())
+    backup_splunk(splunk_home, backup_dir)
+    if testing:
+        splunk_home = backup_dir
+
     new_output_dir = '{}/etc/apps/00_cba_sx_fwd0x_hf_outputs_to_aws_prod_indexer_discovery'.format(splunk_home)
     if os.path.isdir(new_output_dir):
         update_local_output(splunk_home, new_output_dir)
@@ -344,9 +381,6 @@ if host_type == 'LOCAL_HF':
         splunk_home = backup_dir
 
     working_dir = '{}/etc/apps'.format(splunk_home)
-    #LOCAL splunk_home = 'C:/GHE/DEA/splunk_hf_svdc01_copy'
-    #LOCAL working_dir = '{}/apps'.format(splunk_home)
-    copy_dir(working_dir, backup_dir)
     update_hf_files(working_dir)
     # manually copy the 2 new apps
     new_output_dir = copy_new_apps(working_dir, hf_zone)
