@@ -27,9 +27,7 @@ def replace_file_encoding(filename):
         shutil.move(temp_file, filename)
         replaced = True
     
-    return True
-
-
+    return replaced
 
 def read_file(filename):
     try:
