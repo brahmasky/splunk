@@ -27,7 +27,9 @@ def replace_file_encoding(filename):
         shutil.move(temp_file, filename)
         replaced = True
     
-    return replaced
+    return True
+
+
 
 def read_file(filename):
     try:
@@ -285,13 +287,15 @@ def backup_splunk(splunk_home, backup_dir):
     backuped = False
     relevant_dirs=['deployment-apps', 'apps', 'system/local']
     for dir in relevant_dirs:
-        #LOCAL src_dir = '{}/etc/{}'.format(splunk_home, dir)
-        src_dir = '{}/{}'.format(splunk_home, dir)
+        src_dir = '{}/etc/{}'.format(splunk_home, dir)
+        #LOCAL src_dir = '{}/{}'.format(splunk_home, dir)
         if os.path.isdir(src_dir):
             dst_dir = '{}/etc/{}'.format(backup_dir, dir)
             backup_conf(src_dir, dst_dir)
             backuped = True
-
+        else 
+            print('backup from source directory {} has not been performed successfully, exiting'.format(src_dir))
+            exit(1)
     return backuped
 
 # === main flow ===
@@ -342,7 +346,8 @@ if host_type == 'MDS':
     #scan and process $SPLUNK_HOME/etc/deployment-apps
     splunk_home = os.environ['SPLUNK_HOME']
     backup_dir = '{}/{}'.format(temp_dir, host_type.lower())
-    backup_splunk(splunk_home, backup_dir)
+    backup_splunk(splunk_home, backup_dir):
+
     if testing:
         splunk_home = backup_dir
 
@@ -359,6 +364,7 @@ if host_type == 'MDS_HF':
     splunk_home = os.environ['SPLUNK_HOME']
     backup_dir = '{}/{}'.format(temp_dir, host_type.lower())
     backup_splunk(splunk_home, backup_dir)
+
     if testing:
         splunk_home = backup_dir
 
