@@ -343,7 +343,7 @@ if host_type == 'MDS':
     #scan and process $SPLUNK_HOME/etc/deployment-apps
     splunk_home = os.environ['SPLUNK_HOME']
     backup_dir = '{}/{}'.format(temp_dir, host_type.lower())
-    backup_splunk(splunk_home, backup_dir):
+    backup_splunk(splunk_home, backup_dir)
 
     if testing:
         splunk_home = backup_dir
