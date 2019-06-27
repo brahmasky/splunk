@@ -163,6 +163,10 @@ def update_local_output(splunk_home, new_output_dir):
     sytem_local_output = '{}/etc/system/local/outputs.conf'.format(splunk_home)
     new_output = '{}/local/outputs.conf'.format(new_output_dir)
 
+    if not os.path.isfile(sytem_local_output):
+        print('There is no etc/system/local/outputs.conf on this instance')   
+        return
+
     # copy non-tcpout section to new outputs
     copied = copy_outputs(sytem_local_output, new_output)
     # comment out all tcpout sections in system local
