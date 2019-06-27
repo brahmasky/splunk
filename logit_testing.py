@@ -290,7 +290,7 @@ def backup_splunk(splunk_home, backup_dir):
             dst_dir = '{}/etc/{}'.format(backup_dir, dir)
             backup_conf(src_dir, dst_dir)
             backuped = True
-        else 
+        else:
             print('backup from source directory {} has not been performed successfully, exiting'.format(src_dir))
             exit(1)
     return backuped
