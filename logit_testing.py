@@ -22,14 +22,11 @@ def replace_file_encoding(filename):
     infile.close()
     outfile.close()
     if os.path.isfile(temp_file):
-        backup(filename)
-        os.remove(filename)
+        new_filename = '{}.bak_for_encoding'.format(filename)
+        shutil.move(filename, new_filename)
         shutil.move(temp_file, filename)
         replaced = True
-    
-    return True
-
-
+    return replaced
 
 def read_file(filename):
     try:
