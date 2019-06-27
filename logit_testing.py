@@ -1,4 +1,4 @@
-import re, sys, shutil, os, errno, fnmatch, getpass, codecs, tempfile
+import re, sys, shutil, os, errno, fnmatch, getpass, codecs
 from os.path import isdir, join
 from datetime import datetime
 
