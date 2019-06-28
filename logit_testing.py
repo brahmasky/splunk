@@ -10,6 +10,7 @@ except ImportError:
 def usage():
     print("Param 1: host type = TEST/MDS/MDS_HF/LOCAL_HF")
     print("Param 2: HF zone (IPNET/S3_MQ/CMC/SVDC/NPS/CAAS, required if host type is LOCAL_HF)")
+    print("Param 2: Fowarder (S2_FWD01/S3_FWD01/S3_FWD02/S3_FWD03/S3_FWD04/S4_FWD01, required if host type is MDS)")
     exit(1)
 
 def replace_file_encoding(filename):
@@ -174,9 +175,12 @@ def update_local_output(splunk_home, new_output_dir):
 
     return copied and commented
 
-def update_mds_serverclass(splunk_home):
+def update_mds_serverclass(splunk_home, forwarder):
     updated = False
-    forwarder_list=['S2_FWD01','S3_FWD01','S3_FWD02','S3_FWD03','S3_FWD04','S4_FWD01']
+    if forwarder == 'ALL':
+        forwarder_list=['S2_FWD01','S3_FWD01','S3_FWD02','S3_FWD03','S3_FWD04','S4_FWD01']
+    else:
+        forwarder_list = ['{}'.format(forwarder)]
     apps_list = ['00_cba_sx_fwd0x_hf_outputs_to_aws_prod_ssl', '00_cba_sx_fwd0x_hf_outputs_to_aws_prod_indexer_discovery']
     for fowarder in forwarder_list:
         serverclass = '{}/etc/apps/{}-serverclass/local/serverclass.conf'.format(splunk_home, fowarder)
@@ -192,6 +196,26 @@ def update_mds_serverclass(splunk_home):
         updated = True
     return updated
 
+def apps_by_forwarder(splunk_home, forwarder):
+    apps = []
+    serverclass = '{}/etc/apps/{}-serverclass/local/serverclass.conf'.format(splunk_home, forwarder)
+    if os.path.isfile(serverclass):
+        serverclass_config = read_file(serverclass)
+        for each_section in serverclass_config.sections():
+            # serverClass:S2_FWD01:app:S2_FWD01_DTS_Blades_TA_HF
+            # serverClass:S3_FWD02:app:S3_FWD02_dbx
+            pat = re.compile(r'serverClass:{}:app:([^:]+)$'.format(forwarder))
+            matcher = pat.match(each_section)
+            if matcher:
+                apps.append(matcher.group(1))
+
+    else:
+        print('{} does not exist'.format(serverclass))
+    
+    if len(apps) == 0:
+        print('No apps has been found in {}'.format(serverclass))
+    
+    return apps
 
 def copy_dir(src, dest):
     try:
@@ -244,7 +268,9 @@ def check_input(param, input):
     if param == 'host':
         pat = re.compile(r"(TEST|MDS|MDS_HF|LOCAL_HF)$")
     if param == 'zone':
-        pat = re.compile(r"IPNET|S3_MQ|CMC|SVDC|NPS|CAAS")
+        pat = re.compile(r"(IPNET|S3_MQ|CMC|SVDC|NPS|CAAS)$")
+    if param == 'forwarder':
+        pat = re.compile(r"(ALL|S2_FWD01|S3_FWD01|S3_FWD02|S3_FWD03|S3_FWD04|S4_FWD01)$")
 
     matcher = pat.match(input)
     if not matcher:
@@ -289,7 +315,7 @@ def backup_splunk(splunk_home, backup_dir):
     relevant_dirs=['deployment-apps', 'apps', 'system/local']
     for dir in relevant_dirs:
         src_dir = '{}/etc/{}'.format(splunk_home, dir)
-        #LOCAL src_dir = '{}/{}'.format(splunk_home, dir)
+        #LOCALsrc_dir = '{}/{}'.format(splunk_home, dir)
         if os.path.isdir(src_dir):
             dst_dir = '{}/etc/{}'.format(backup_dir, dir)
             backup_conf(src_dir, dst_dir)
@@ -310,6 +336,11 @@ elif len(sys.argv) >= 2:
             usage()
         hf_zone = sys.argv[2]
         check_input('zone', hf_zone)
+    if host_type == 'MDS':
+        if len(sys.argv) < 3:
+            usage()
+        forwarder = sys.argv[2]
+        check_input('forwarder', forwarder)
 elif len(sys.argv) > 3:
     usage()
 
@@ -346,18 +377,29 @@ if host_type == 'MDS':
     check_apps_in_temp()
     #scan and process $SPLUNK_HOME/etc/deployment-apps
     splunk_home = os.environ['SPLUNK_HOME']
+    #LOCAL Git splunk_home = 'C:/GHE/DEA/splunk_mds'
     backup_dir = '{}/{}'.format(temp_dir, host_type.lower())
     backup_splunk(splunk_home, backup_dir)
 
     if testing:
-        splunk_home = backup_dir
+         splunk_home = backup_dir
 
     working_dir = '{}/etc/deployment-apps'.format(splunk_home)
-    update_hf_files(working_dir)
-    # rename and copy the 2 new apps to $SPLUNK_HOME/etc/deployment-apps
-    if copy_new_apps(working_dir):
-        #if copy is successful, update serverclass for all forwarders
-        update_mds_serverclass(splunk_home)
+
+    # print('splunk_home : {}'.format(splunk_home))
+    # print('forwarder : {}'.format(forwarder))
+
+    if forwarder != 'ALL':
+        apps_list = apps_by_forwarder(splunk_home, forwarder)
+        for app in apps_list:
+            if not app.startswith('00_cba'):
+                app_dir = '{}/etc/deployment-apps/{}'.format(splunk_home, app)
+                update_hf_files(app_dir)
+
+    # # rename and copy the 2 new apps to $SPLUNK_HOME/etc/deployment-apps
+    copy_new_apps(working_dir)
+    #if copy is successful, update serverclass for all forwarders
+    update_mds_serverclass(splunk_home, forwarder)
 
 if host_type == 'MDS_HF':
     # make sure MDS has been updated and the specific host/forwarder has been reloaded from MDS
@@ -368,6 +410,7 @@ if host_type == 'MDS_HF':
 
     if testing:
         splunk_home = backup_dir
+
 
     new_output_dir = '{}/etc/apps/00_cba_sx_fwd0x_hf_outputs_to_aws_prod_indexer_discovery'.format(splunk_home)
     if os.path.isdir(new_output_dir):
