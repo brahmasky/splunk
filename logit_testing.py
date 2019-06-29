@@ -325,6 +325,15 @@ def backup_splunk(splunk_home, backup_dir):
             exit(1)
     return backuped
 
+def yes_or_no(question):
+    while "the answer is invalid":
+        reply = str(raw_input(question+' (y/n): ')).lower().strip()
+        if reply[:1] == 'y':
+            return True
+        if reply[:1] == 'n':
+            return False
+
+
 # === main flow ===
 if len(sys.argv) < 2:
     host_type = 'TEST'
@@ -395,6 +404,9 @@ if host_type == 'MDS':
             if not app.startswith('00_cba'):
                 app_dir = '{}/etc/deployment-apps/{}'.format(splunk_home, app)
                 update_hf_files(app_dir)
+    else:
+        if yes_or_no('This would update ALL the Fowarder configurations uner {}\r\nDo you wish to contiune?'.format(working_dir))
+            update_hf_files(working_dir)
 
     # # rename and copy the 2 new apps to $SPLUNK_HOME/etc/deployment-apps
     copy_new_apps(working_dir)
