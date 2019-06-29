@@ -184,16 +184,19 @@ def update_mds_serverclass(splunk_home, forwarder):
     apps_list = ['00_cba_sx_fwd0x_hf_outputs_to_aws_prod_ssl', '00_cba_sx_fwd0x_hf_outputs_to_aws_prod_indexer_discovery']
     for fowarder in forwarder_list:
         serverclass = '{}/etc/apps/{}-serverclass/local/serverclass.conf'.format(splunk_home, fowarder)
-        serverclass_config = read_file(serverclass)
-        backup(serverclass)
-        for apps in apps_list:
-            section = 'serverClass:{}:app:{}'.format(fowarder, apps)
-            serverclass_config.add_section(section)
-            serverclass_config.set(section, 'restartSplunkWeb', '0')
-            serverclass_config.set(section, 'restartSplunkd', '1')
-            serverclass_config.set(section, 'stateOnClient', 'enabled')
-        write_file(serverclass_config, serverclass)
-        updated = True
+        if os.path.isfile(serverclass):
+            serverclass_config = read_file(serverclass)
+            backup(serverclass)
+            for apps in apps_list:
+                section = 'serverClass:{}:app:{}'.format(fowarder, apps)
+                serverclass_config.add_section(section)
+                serverclass_config.set(section, 'restartSplunkWeb', '0')
+                serverclass_config.set(section, 'restartSplunkd', '1')
+                serverclass_config.set(section, 'stateOnClient', 'enabled')
+            write_file(serverclass_config, serverclass)
+            updated = True
+        else:
+            print('File {} does not exist'.format(serverclass))
     return updated
 
 def apps_by_forwarder(splunk_home, forwarder):
@@ -242,11 +245,15 @@ def copy_new_apps(working_dir, zone='MDS'):
         if os.path.isdir(source_dir):
             dst_app = apps.replace('zoneName', zone_name)
             dst_dir = '{}/{}'.format(working_dir, dst_app)
-            if dst_dir.endswith('discovery'):
-                new_output_dir = dst_dir
-            print('souce: {} ==> dst: {}'.format(source_dir, dst_dir))
-            copy_dir(source_dir, dst_dir)
-            copied = True
+            if not os.path.isdir(dst_dir):
+                print('souce: {} ==> dst: {}'.format(source_dir, dst_dir))
+                copy_dir(source_dir, dst_dir)
+                if dst_dir.endswith('discovery'):
+                    new_output_dir = dst_dir
+                copied = True
+            else:
+                print('output app {} has been copied before'.format())
+
     if copied:
         return new_output_dir
 
@@ -405,7 +412,7 @@ if host_type == 'MDS':
                 app_dir = '{}/etc/deployment-apps/{}'.format(splunk_home, app)
                 update_hf_files(app_dir)
     else:
-        if yes_or_no('This would update ALL the Fowarder configurations uner {}\r\nDo you wish to contiune?'.format(working_dir))
+        if yes_or_no('This would update ALL the Fowarder configurations uner {}\r\nDo you wish to contiune?'.format(working_dir)):
             update_hf_files(working_dir)
 
     # # rename and copy the 2 new apps to $SPLUNK_HOME/etc/deployment-apps
