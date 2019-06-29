@@ -252,7 +252,7 @@ def copy_new_apps(working_dir, zone='MDS'):
                     new_output_dir = dst_dir
                 copied = True
             else:
-                print('output app {} has been copied before'.format())
+                print('output app {} has been copied before'.format(dst_dir))
 
     if copied:
         return new_output_dir
@@ -334,7 +334,7 @@ def backup_splunk(splunk_home, backup_dir):
 
 def yes_or_no(question):
     while "the answer is invalid":
-        reply = str(raw_input(question+' (y/n): ')).lower().strip()
+        reply = str(input(question+' (y/n): ')).lower().strip()
         if reply[:1] == 'y':
             return True
         if reply[:1] == 'n':
