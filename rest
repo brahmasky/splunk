@@ -1,3 +1,16 @@
 #adding proxy
 curl -k -u admin:password https://localhost:8089/services/server/httpsettings/proxysettings -d name="proxyConfig"
 curl -k -u admin:password https://localhost:8089/services/server/httpsettings/proxysettings/proxyConfig -d no_proxy="test"
+
+
+| rest splunk_server=<indexer> /servicesNS/-/-/configs/conf-indexes
+| search disabled=0 
+| fields eai:acl.app eai:appName title path maxDataSize maxTotalDataSizeMB  maxHotBuckets frozenTimePeriodInSecs 
+ 
+ 
+| rest splunk_server=<indexer> /servicesNS/-/-/configs/conf-indexes
+| search disabled=0
+| fields eai:acl.app eai:appName title path maxDataSize maxTotalDataSizeMB  maxHotBuckets  frozenTimePeriodInSecs
+| eval cm = "cm7"
+| fields cm eai:acl.app eai:appName title path maxDataSize maxTotalDataSizeMB  maxHotBuckets  frozenTimePeriodInSecs
+| collect index=<index_summary> source=discovery:indexes testmode=true
