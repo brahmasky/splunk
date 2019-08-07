@@ -14,3 +14,6 @@ curl -k -u admin:password https://localhost:8089/services/server/httpsettings/pr
 | eval cm = "cm7"
 | fields cm eai:acl.app eai:appName title path maxDataSize maxTotalDataSizeMB  maxHotBuckets  frozenTimePeriodInSecs
 | collect index=<index_summary> source=discovery:indexes testmode=true
+
+
+|rest splunk_server=<<SH>> serviceNS/-/-/configs/conf-server
