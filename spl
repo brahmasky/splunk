@@ -21,3 +21,15 @@ index=_internal source=*metrics.log group=tcpin_connections
     | format] 
 | stats values(os) as os values(version) as version values(hostname) as hostname values(guid) as guid values(fwdType) as fwdType values(ssl) as ssl values(connectionType) as connectionType by sourceIp
 
+#Fowarders connection
+index=_internal  group=tcp*_connections   sourcetype=splunkd 
+| eval temp=split(lastIndexer,":") | eval forwardedtoport=mvindex(temp,1)
+| eval LastTime=strftime(_time, "%c") 
+| eventstats dc(group) as GROUP  by host
+| eval isIF=if(GROUP==2,"yes","no")
+| eval ingest_pipe=if(isnull(ingest_pipe),"1",ingest_pipe)
+| stats  max(LastTime) as LastTime  values(lastIndexer) as "Forwared To"  values(host) as "Receiving Host" values(forwardedtoport) as "Receiving Port" values(connectionType) as "Conn Type" values(ssl) as "SSL Enabled"  values(fwdType) as fwdType values(isIF) as "Receiving Host is IF"  max(tcp_KBps) as "max tcp_KBps by Receiving Host"  by hostname ingest_pipe
+| appendcols [search index=_internal group=per_source_thruput series=*splunkd.log 
+| stats max(kbps) as maxkbps avg(kbps) as avgkbps-fwd perc25(kbps) as perc25kbps-fwd median(kbps) as mediamkbps-fwd perc75(kbps) as perc75kbps-fwd perc90(kbps) as pertc90kbps-fwd by host | rename host as hostname]
+| foreach *kbps* [eval <<FIELD>>=round('<<FIELD>>', 5)]
+| search hostname=SOMEHOST
