@@ -145,15 +145,15 @@ How often does Splunk recheck the LDAP server?
 
 ### Question #:20 
 What is the correct order of steps in Duo Multifactor Authentication? 
-**> A
-> 1. Request Login
-> 2. Connect to SAML server
-> 3. Duo MFA
-> 4. Create User session
-> 5. Authentication Granted
-> 6. Log into Splunk**
+> **A**
+> > 1. Request Login
+> > 2. Connect to SAML server
+> > 3. Duo MFA
+> > 4. Create User session
+> > 5. Authentication Granted
+> > 6. Log into Splunk
 
-> B)
+> **B**
 1. Request Login 2 Duo MFA 3. Authentication Granted  4 Connect to SAML server  5. Log into Splunk 6. Create User session 
 
 C)
