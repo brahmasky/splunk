@@ -103,7 +103,7 @@ servers = server1:8089, server2:8089
 For single line event sourcetypes. it is most efficient to set SHOULD_linemerge to what value? 
 - True 
 - **False**
-- <regex string>
+- \<regex string\>
 - Newline Character 
 
 ### Question #:15 
