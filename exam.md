@@ -8,48 +8,60 @@ What options are available when creating custom roles? (select all that apply)
 ### Question #:2 
 Where should apps be located on the deployment server that the clients pull from? 
 - $SFLUNK_KOME/etc/apps
-- $SPLUNK_HCME/etc/sear:ch
+- $SPLUNK_HCME/etc/search
 - $SPLUNK_HCME/etc/master-apps 
-- **$SPLUNK HCME/etc/deployment-apps 
+- **$SPLUNK HCME/etc/deployment-apps**
 
-Question #:3 
+### Question #:3 
 In case of a conflict between a whitelist and a blacklist input setting, which one is used? 
-A. Blacklist B. Whitelist C. They cancel each other out. 
-D. Whichever is entered into the configuration first. 
+- Blacklist
+- **Whitelist**
+- They cancel each other out. 
+- Whichever is entered into the configuration first. 
 
-Question #:4 
+### Question #:4 
 Which of the following are supported options when configuring optional network inputs? 
-A. Metadata override, sender filtering options, network input queues (quantum queues) 
-B. Metadata override, sender filtering options, network input queues (memory/persistent queues) 
-C. Filename override, sender filtering options, network output queues (memory/persistent queues) 
-D. Metadata override, receiver filtering options, network input queues (memory/persistent queues) 
+-  Metadata override, sender filtering options, network input queues (quantum queues) 
+-  **Metadata override, sender filtering options, network input queues (memory/persistent queues)**
+-  Filename override, sender filtering options, network output queues (memory/persistent queues) 
+-  Metadata override, receiver filtering options, network input queues (memory/persistent queues) 
 
+### Question #:5
 How would you configure your distsearch conf to allow you to run the search below? 
 sourcetype=access_combined status=200 action=purchase splunk_setver_group=HOUSTON 
-A.
-￼
-B 
-￼
-C
-￼
-D
-￼
- 
-Question #:6 
+```
+[distributedSearch]
+servers = nyc1:8089, nyc2:8089, houston1:8089, houston2:8089
+
+[distributedSearch:NYC]
+default = false
+servers = nyc1:8089, nyc2:8089
+
+[distributedSearch:HOUSTON]
+default = false
+servers = houston1:8089, houston2:8089
+```
+
+### Question #:6 
 Which Splunk component consolidates the individual results and prepares reports in a distributed environment? 
-A. Indexers B. Forwarder 
-C. Search head 
-D. Search peers 
+- Indexers
+- Forwarder 
+- **Search head **
+- Search peers 
 
-Question #:7 
+### Question #:7 
 Where can scripts for scripted inputs reside on the host file system? (select all that apply) 
-A. $SFLUNK_HOME/bin/scripts B. $SPLUNK_HOME/etc/apps/bin C. $SPLUNK_HOME/etc/system/bin 
-D. $SPLUNK_HOME/etc/apps/<your_app>/bin_ 
+- **$SFLUNK_HOME/bin/scripts**
+- $SPLUNK_HOME/etc/apps/bin
+- **$SPLUNK_HOME/etc/system/bin **
+- $SPLUNK_HOME/etc/apps/<your_app>/bin_ 
 
-Question #:8 
+### Question #:8 
 The universal forwarder has which capabilities when sending data? (select all that apply) 
-A. Sending alerts B. Compressing data C. Obfuscating/hiding data 
-D. Indexer acknowledgement 
+- Sending alerts
+- **Compressing data**
+- Obfuscating/hiding data 
+- **Indexer acknowledgement**
 
 Question #:9 
 Which of the following are supported configuration methods to add inputs on a forwarder? (select all that apply) 
