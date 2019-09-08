@@ -179,15 +179,16 @@ What is the correct order of steps in Duo Multifactor Authentication?
 
 ### Question #:21 
 In which Splunk configuration is the SEDCMD used? 
-**- props, conf**
+- **props, conf**
 - inputs.conf
 - indexes.conf 
 - transforms.conf 
 
-
-Question #:22 
+### Question #:22 
 Which Splunk component performs indexing and responds to search requests from the search head? 
-A. Forwarder B. Search peer C. License master 
+A. Forwarder
+**B. Search peer**
+C. License master 
 D. Search head cluster 
 
 Question #:23 
