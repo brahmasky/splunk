@@ -145,7 +145,7 @@ How often does Splunk recheck the LDAP server?
 
 ### Question #:20 
 What is the correct order of steps in Duo Multifactor Authentication? 
-> **A**
+> A
 > > 1. Request Login
 > > 2. Connect to SAML server
 > > 3. Duo MFA
@@ -153,24 +153,36 @@ What is the correct order of steps in Duo Multifactor Authentication?
 > > 5. Authentication Granted
 > > 6. Log into Splunk
 
-> **B**
-1. Request Login 2 Duo MFA 3. Authentication Granted  4 Connect to SAML server  5. Log into Splunk 6. Create User session 
+>  B
+> > 1. Request Login 
+> > 2. Duo MFA
+> > 3. Authentication Granted 
+> > 4. Connect to SAML server 
+> > 5. Log into Splunk
+> > 6. Create User session 
 
-C)
-1 Request Login 
-2 Check authentication / group mapping 
-3 Authentication Granted 4. Duo MFA 5. Create User session 
-6. Log into Splunk 
+> **C**
+> > 1. Request Login 
+> > 2. Check authentication / group mapping 
+> > 3. Authentication Granted
+> > 4. Duo MFA
+> > 5. Create User session 
+> > 6. Log into Splunk 
 
-D. 
-1 Request Login 
-2 Duo MFA 3. Check authentication / group mapping 
-4 Create User session 5. Authentication Granted 6 Log into Splunk 
+> D 
+> > 1. Request Login 
+> > 2. Duo MFA
+> > 3. Check authentication / group mapping 
+> > 4. Create User session
+> > 5. Authentication Granted
+> > 6. Log into Splunk 
 
-Question #:21 
+### Question #:21 
 In which Splunk configuration is the SEDCMD used? 
-A. props, conf B. inputs.conf C. indexes.conf 
-D. transforms.conf 
+**- props, conf**
+- inputs.conf
+- indexes.conf 
+- transforms.conf 
 
 
 Question #:22 
