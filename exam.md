@@ -1,9 +1,9 @@
 ### Question #:1
 What options are available when creating custom roles? (select all that apply) 
-- Restrict search terms
-- Whitelist search terms
-- Limit the number of concurrent search jobs 
-- Allow or restrict indexes that can be searched. 
+-. Restrict search terms
+-. Whitelist search terms
+-. Limit the number of concurrent search jobs 
+-. Allow or restrict indexes that can be searched. 
 
 Question #:2 
 Where should apps be located on the deployment server that the clients pull from? 
