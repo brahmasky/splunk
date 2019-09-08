@@ -2,15 +2,15 @@
 What options are available when creating custom roles? (select all that apply)
 - **Restrict search terms**
 - Whitelist search terms
-- **Limit the number of concurrent search jobs
+- **Limit the number of concurrent search jobs**
 - **Allow or restrict indexes that can be searched**
 
-Question #:2 
+### Question #:2 
 Where should apps be located on the deployment server that the clients pull from? 
-A. $SFLUNK_KOME/etc/apps
-B. $SPLUNK_HCME/etc/sear:ch
-C. $SPLUNK_HCME/etc/master-apps 
-D. $SPLUNK HCME/etc/deployment-apps 
+- $SFLUNK_KOME/etc/apps
+- $SPLUNK_HCME/etc/sear:ch
+- $SPLUNK_HCME/etc/master-apps 
+- **$SPLUNK HCME/etc/deployment-apps 
 
 Question #:3 
 In case of a conflict between a whitelist and a blacklist input setting, which one is used? 
