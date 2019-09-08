@@ -117,30 +117,41 @@ When running the command shown below, what is the default path in which deployme
 ### Question #:16 
 Which of the following indexes come pre-configured with Splunk Enterprise? (select all that apply) 
 - _license
-- _internal
+- **_internal**
 - _external 
-- _thefishbucket 
+- **_thefishbucket**
 
 
-Question #:17 
+### Question #:17 
 Which Splunk indexer operating system platform is supported when sending logs from a Windows universal forwarder? 
-A. Any OS platform B. Linux platform only C. Windows platform only. 
-D. None of the above. 
+- **Any OS platform**
+- Linux platform only
+- Windows platform only. 
+- None of the above. 
 
-Question #:18 
+### Question #:18 
 Which of the following statements describe deployment management? (select all that apply) 
-A. Requires an Enterprise license 
-B. Is responsible for sending apps to forwarders. C. Once used, is the only way to manage forwarders D. Can automatically restart the host OS running the forwarder. 
+- **Requires an Enterprise license**
+- **Is responsible for sending apps to forwarders**
+- Once used, is the only way to manage forwarders
+- **Can automatically restart the host OS running the forwarder.**
 
-Question #:19 
+### Question #:19 
 How often does Splunk recheck the LDAP server? 
-A. Every 5 minutes B. Each time a user logs in C. Each time Splunk is restarted 
-D. Varies based on LDAP_refresh setting. 
+- Every 5 minutes
+- **Each time a user logs in**
+- Each time Splunk is restarted 
+- Varies based on LDAP_refresh setting. 
 
-Question #:20 
+### Question #:20 
 What is the correct order of steps in Duo Multifactor Authentication? 
-A)
-1 Request Login 2. Connect to SAML server 3 Duo MFA 4 Create User session 5 Authentication Granted  6. Log into Splunk  
+1. Request Login
+2. Connect to SAML server
+3. Duo MFA
+4. Create User session
+5. Authentication Granted
+6. Log into Splunk
+
 B)
 1. Request Login 2 Duo MFA 3. Authentication Granted  4 Connect to SAML server  5. Log into Splunk 6. Create User session 
 
