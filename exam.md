@@ -186,51 +186,63 @@ In which Splunk configuration is the SEDCMD used?
 
 ### Question #:22 
 Which Splunk component performs indexing and responds to search requests from the search head? 
-A. Forwarder
-**B. Search peer**
-C. License master 
-D. Search head cluster 
+- Forwarder
+- **Search peer**
+- License master 
+- Search head cluster 
 
-Question #:23 
+### Question #:23 
 In which phase of the index time process does the license metering occur? 
-A. input phase B. Parsing phase C. Indexing phase 
-D. Licensing phase 
+- input phase
+- Parsing phase
+- **Indexing phase**
+- Licensing phase 
 
-Question #:25 
-Which setting in indexes. conf allows data retention to be controlled by time? 
-A. maxDaysToKeep B. moveToFrozenAfter C. maxDataRetentionTime 
-D. frozenTimePeriodlnSecs 
+### Question #:25 
+Which setting in indexes.conf allows data retention to be controlled by time? 
+- maxDaysToKeep
+- moveToFrozenAfter
+- maxDataRetentionTime
+- **frozenTimePeriodlnSecs**
 
-Question #:26 
+### Question #:26 
 Which optional configuration setting in inputs .conf allows you to selectively forward the data to specific indexer(s)? 
-A. _TCP_ROUTING B. _INDEXER_LIST C. _INDEXER_GROUP 
-D. _INDEXER ROUTING 
+- **_TCP_ROUTING**
+- _INDEXER_LIST
+- _INDEXER_GROUP 
+- _INDEXER ROUTING 
 
-Question #:27 
+### Question #:27 
 Which valid bucket types are searchable? (select all that apply) 
-A. Hot buckets B. Cold buckets C. Warm buckets 
-D. Frozen buckets 
+- **Hot buckets**
+- Cold buckets
+- **Warm buckets** 
+- Frozen buckets 
 
 Question #:28 
 In this source definition the MAX_TIMESTAMP_LOOKHEAD is missing. Which value would fit best? 
-￼
+￼` TIME_FORMAT = %Y-%m-%d %H:%M:%S.%3N %z `
 ￼
 Event example: 
 
-A. MAX_TIMESTAMP_L0CKAHEAD = 5 
-B. MAX_TIMESTAMP_LOOKAHEAD - 10 
-C. MAX_TIMESTAMF_LOOKHEAD = 20 
-D. MAX TIMESTAMP LOOKAHEAD - 30 
+- MAX_TIMESTAMP_L0CKAHEAD = 5 
+- MAX_TIMESTAMP_LOOKAHEAD - 10 
+- MAX_TIMESTAMF_LOOKHEAD = 20 
+- **MAX TIMESTAMP LOOKAHEAD - 30**
 
-Question #:29 
+### Question #:29 
 In which scenario would a Splunk Administrator want to enable data integrity check when creating an index? 
-A. To ensure that hot buckets are still open for writes and have not been forced to roll to a cold state B. To ensure that configuration files have not been tampered with for auditing and/or legal purposes C. To ensure that user passwords have not been tampered with for auditing and/or legal purposes. 
-D. To ensure that data has not been tampered with for auditing and/or legal purposes 
+- To ensure that hot buckets are still open for writes and have not been forced to roll to a cold state
+- To ensure that configuration files have not been tampered with for auditing and/or legal purposes
+- To ensure that user passwords have not been tampered with for auditing and/or legal purposes. 
+- **To ensure that data has not been tampered with for auditing and/or legal purposes**
 
-Question #:30 
-To set up a Network input in Splunk, what needs to be specified'? 
-A. File path. B. Username and password C. Network protocol and port number. 
-D. Network protocol and MAC address. 
+### Question #:30 
+To set up a Network input in Splunk, what needs to be specified? 
+- File path.
+- Username and password
+- **Network protocol and port number.**
+- Network protocol and MAC address. 
 
 Question #:31 
 What is required when adding a native user to Splunk? (select all that apply) 
