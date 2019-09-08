@@ -1,6 +1,6 @@
 ### Question #:1
 What options are available when creating custom roles? (select all that apply) 
-- * Restrict search terms *
+- *Restrict search terms*
 - Whitelist search terms
 * - Limit the number of concurrent search jobs *
 * - Allow or restrict indexes that can be searched*
