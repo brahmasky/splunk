@@ -46,14 +46,14 @@ servers = houston1:8089, houston2:8089
 Which Splunk component consolidates the individual results and prepares reports in a distributed environment? 
 - Indexers
 - Forwarder 
-- **Search head **
+- **Search head**
 - Search peers 
 
 ### Question #:7 
 Where can scripts for scripted inputs reside on the host file system? (select all that apply) 
 - **$SFLUNK_HOME/bin/scripts**
 - $SPLUNK_HOME/etc/apps/bin
-- **$SPLUNK_HOME/etc/system/bin **
+- **$SPLUNK_HOME/etc/system/bin**
 - $SPLUNK_HOME/etc/apps/<your_app>/bin_ 
 
 ### Question #:8 
@@ -63,49 +63,63 @@ The universal forwarder has which capabilities when sending data? (select all th
 - Obfuscating/hiding data 
 - **Indexer acknowledgement**
 
-Question #:9 
+### Question #:9 
 Which of the following are supported configuration methods to add inputs on a forwarder? (select all that apply) 
-A. CLI B. Edit inputs . conf C. Edit forwarder.conf D. Forwarder Management 
+- **CLI**
+- **Edit inputs . conf**
+- Edit forwarder.conf
+- Forwarder Management 
 
-Question #:10 
+### Question #:10 
 When configuring monitor inputs with whitelists or blacklists, what is the supported method of filtering the lists? 
-A. Slash notation B. Regular expression C. Irregular expression D. Wildcard-only expression 
+- Slash notation
+- **Regular expression**
+- Irregular expression
+- Wildcard-only expression 
 
-Question #:11 
+### Question #:11 
 Local user accounts created in Splunk store passwords in which file? 
-A. $ SFLUNK_KOME/etc/passwd B. $ SFLUNK_KCME/etc/authentication C. $ S?LUNK_HCME/etc/users/passwd.conf 
-D. $ SPLUNK HCME/etc/users/authentication.conf 
+- **$SPLUNK_HOME/etc/passwd**
+- $SPLUNK_HOME/etc/authentication
+- $SPLUNK_HOME/etc/users/passwd.conf 
+- $SPLUNK_HOME/etc/users/authentication.conf 
 
-Question #:12 
+### Question #:12 
 Which forwarder type can parse data prior to forwarding? 
-A. Universal forwarder B. Heaviest forwarder C. Hyper forwarder 
-D. Heavy forwarder 
+- Universal forwarder
+- Heaviest forwarder
+- Hyper forwarder 
+- **Heavy forwarder**
 
 Question #:13 
 Which of the following is valid distribute search group? 
-A) 
-￼
- B) 
-￼
-C)
-￼
-D)
-￼
+```
+[distributedSearch:Paris]
+default = false
+servers = server1:8089, server2:8089
+```
  
-Question #:14 
+### Question #:14 
 For single line event sourcetypes. it is most efficient to set SHOULD_linemerge to what value? 
-A. True 
-B. False C. <regex string> D. Newline Character 
+- True 
+- **False**
+- <regex string>
+- Newline Character 
 
-Question #:15 
-When running the command shown below, what is the default path in which deployment server. conf is created? splunk set deploy-poll deployServer:port 
-A. SFLUNK_HOME/etc/deployment B. SPLUNK_HOME/etc/system/local C. SPLUNK_HOME/etc/system/default 
-D. SPLUNK_KOME/etc/apps/deployment 
+### Question #:15 
+When running the command shown below, what is the default path in which deployment server.conf is created?
+> splunk set deploy-poll deployServer:port
+- SFLUNK_HOME/etc/deployment
+- **SPLUNK_HOME/etc/system/local**
+- SPLUNK_HOME/etc/system/default 
+- SPLUNK_KOME/etc/apps/deployment 
 
-Question #:16 
+### Question #:16 
 Which of the following indexes come pre-configured with Splunk Enterprise? (select all that apply) 
-A. _license B. _lnternal C. _external 
-D. _thefishbucket 
+- _license
+- _internal
+- _external 
+- _thefishbucket 
 
 
 Question #:17 
