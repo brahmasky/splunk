@@ -244,38 +244,50 @@ To set up a Network input in Splunk, what needs to be specified?
 - **Network protocol and port number.**
 - Network protocol and MAC address. 
 
-Question #:31 
+### Question #:31 
 What is required when adding a native user to Splunk? (select all that apply) 
-A. Password B. Username C. Full Name 
-D. Default app 
+- **Password**
+- **Username**
+- Full Name 
+- Default app 
 
 
-Question #:32 
-Which Splunk component does a search head primarily communicate with? 
-A. Indexer B. Forwarder C. Cluster master 
-D. Deployment server 
+### Question #:32 
+- ch Splunk component does a search head primarily communicate with? 
+- **Indexer**
+- Forwarder
+- Cluster master 
+- Deployment server 
 
-Question #:33 
+### Question #:33 
 User role inheritance allows what to be inherited from the parent role? (select all that apply) 
-A. Parents B. Capabilities C. Index access 
-D. Search history 
+- Parents
+- **Capabilities**
+- **Index access**
+- Search history 
 
-Question #:34 
+### Question #:34 
 Which of the following apply to how distributed search works? (select all that apply) 
-A. The search head dispatches searches to the peers B. The search peers pull the data from the forwarders. C. Peers run searches in parallel and return their portion of results. 
-D. The search head consolidates the individual results and prepares reports 
+- **The search head dispatches searches to the peers**
+- The search peers pull the data from the forwarders.
+- **Peers run searches in parallel and return their portion of results.**
+- **The search head consolidates the individual results and prepares reports**
 
 
-Question #:35 
+### Question #:35 
 How do you remove missing forwarders from the Monitoring Console? 
-A. By restarting Splunk. 
-B. By rescanning active forwarders. C. By reloading the deployment server. D. By rebuilding the forwarder asset table. 
+- By restarting Splunk. 
+- By rescanning active forwarders.
+- By reloading the deployment server.
+- **By rebuilding the forwarder asset table.**
 
-Question #:36 
-What is the difference between the two wildcards ... and - for the monitor stanza in inputs,.conf? 
-A. … is not supported in monitor stanzas 
-B. There is no difference, they are interchangable and match anything beyond directory boundaries. 
-C. * matches anything in that specific directory path segment, whereas ... recurses through subdirectories as well.  D. … matches anything in that specific directory path segment, whereas - recurses through subdirectories as well.  
+### Question #:36 
+What is the difference between the two wildcards ... and * for the monitor stanza in inputs.conf? 
+- … is not supported in monitor stanzas 
+- There is no difference, they are interchangable and match anything beyond directory boundaries. 
+- **\* matches anything in that specific directory path segment, whereas ... recurses through subdirectories as well.**
+- … matches anything in that specific directory path segment, whereas * recurses through subdirectories as well.
+
 Question #:37 
 Which layers are involved in Splunk configuration file layering? (select all that apply) 
 A. App context B. User context C. Global context 
