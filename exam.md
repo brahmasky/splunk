@@ -316,120 +316,160 @@ What are the minimum required settings when creating a network input in Splunk?
 - Protocol, username, port 
 - Protocol, IP. port number 
 
-Question #:41 
+### Question #:41 
 Which of the following are methods for adding inputs in Splunk? (select all that apply) 
-A. CLI 
-B. Splunk Web C. Editing inputs. conf 
-D. Editing monitor. conf 
+- **CLI**
+- **Splunk Web**
+- **Editing inputs. conf**
+- Editing monitor. conf 
 
-Question #:42 
+### Question #:42 
 Which Splunk forwarder type allows parsing of data before forwarding to an indexer? 
-A. Universal forwarder B. Parsing forwarder C. Heavy forwarder 
-D. Advanced forwarder 
+- Universal forwarder
+- Parsing forwarder
+- **Heavy forwarder**
+- Advanced forwarder 
 
-Question #:43 
+### Question #:43 
 Which of the following statements apply to directory inputs? {select all that apply) 
-A. All discovered text files are consumed.  B. Compressed files are ignored by default  C. Splunk recursively traverses through the directory structure.  D. When adding new log files to a monitored directory, the forwarder must be restarted to take them into account.  
-Question #:44 
+- **All discovered text files are consumed.**
+- Compressed files are ignored by default
+- **Splunk recursively traverses through the directory structure.**
+- When adding new log files to a monitored directory, the forwarder must be restarted to take them into account.
+
+### Question #:44 
 You update a props. conf file while Splunk is running. You do not restart Splunk and you run this command: 
-splunk btoo1 props list —debug
+> splunk btoo1 props list —debug
 What will the output be? 
-A. list of all the configurations on-disk that Splunk contains.  B. A verbose list of all configurations as they were when splunkd started.  C. A list of props. conf configurations as they are on-disk along with a file path from which the configuration is located  D. A list of the current running props, conf configurations along with a file path from which the configuration was made  
+- list of all the configurations on-disk that Splunk contains.
+- A verbose list of all configurations as they were when splunkd started.
+- **A list of props. conf configurations as they are on-disk along with a file path from which the configuration is located**
+- A list of the current running props, conf configurations along with a file path from which the configuration was made
 
+### Question #:45
 This file has been manually created on a universal forwarder 
-￼
-￼
+￼> /opt/splunkforwarder/etc/apps/my_TA/local/inputs.conf
+￼```
+[monitor:///var/log/messages]
+```
 A new Splunk admin comes in and connects the universal forwarders to a deployment server and deploys the same app with a new 
-￼
+￼￼> /opt/splunkforwarder/etc/apps/my_TA/local/inputs.conf
+￼```
+[monitor:///var/log/maillog]
+```
  
+Which file is now monitored?
+- /var/log/messages
+- **/var/log/maillog**
+- /var/log/maillog and /var/log/messages 
+- none of the above 
 
-Which file is now monitored? A. /var/log/messages B. /var/log/maillog C. /var/log/maillog and /var/log/messages 
-D. none of the above 
-
-Question #:46 
+### Question #:46 
 Within props. conf, which stanzas are valid for data modification? (select all that apply) 
-A. Host 
-B. Server C. Source D. Sourcetype 
+- **Host**
+- Server
+- **Source**
+- **Sourcetype** 
 
-Question #:47 
+### Question #:47 
 The priority of layered Splunk configuration files depends on the file's: 
-A. Owner B. Weight C. Context 
-D. Creation time 
+- Owner
+- Weight
+- **Context**
+- Creation time 
 
-Question #:48 
+### Question #:48 
 How does the Monitoring Console monitor forwarders? 
-A. By pulling internal logs from forwarders. B. By using the forwarder monitoring add-on C. With internal logs forwarded by forwarders. 
-D. With internal logs forwarded by deployment server. 
+- By pulling internal logs from forwarders.
+- By using the forwarder monitoring add-on
+- **With internal logs forwarded by forwarders.**
+- With internal logs forwarded by deployment server. 
 
-Question #:49 
+### Question #:49 
 What type of data is counted against the Enterprise license at a fixed 150 bytes per event? 
-A. License data B. Metrics data C. Internal Splunk data 
-D. Internal Windows logs 
+- License data
+- **Metrics data**
+- Internal Splunk data 
+- Internal Windows logs 
 
-Question #:50 
+### Question #:50 
 When deploying apps, which attribute in the forwarder management interface determines the apps that clients install? 
-A. App Class 
-B. Client Class 
-C. Server Class 
-D. Forwarder Class 
+- App Class 
+- Client Class 
+- **Server Class**
+- Forwarder Class 
 
-Question #:51 
+### Question #:51 
 Which of the following are required when defining an index in indexes. conf? (select all that apply) 
-A. coldPath B. homePath C. frozenPath 
-D. thawedPath 
+- **coldPath**
+- **homePath**
+- frozenPath 
+- **thawedPath**
 
-Question #:52 
+### Question #:52 
 What are the required stanza attributes when configuring the transforms. conf to manipulate or remove events? 
-A. REGEX, DEST. FORMAT B. REGEX. SRC_KEY, FORMAT C. REGEX, DEST_KEY, FORMAT 
-D. REGEX, DEST_KEY FORMATTING 
+- REGEX, DEST. FORMAT
+- REGEX. SRC_KEY, FORMAT
+- **REGEX, DEST_KEY, FORMAT**
+- REGEX, DEST_KEY FORMATTING 
 
-Question #:53 
+###Question #:53 
 Which authentication methods are natively supported within Splunk Enterprise? (select all that apply) 
-A. LDAP 
-B. SAML C. RADIUS D. Duo Multifactor Authentication 
+- **LDAP**
+- **SAML**
+- RADIUS
+- **Duo Multifactor Authentication**
 
 
-Question #:54 
+### Question #:54 
 During search time, which directory of configuration files has the highest precedence? 
-A. $SFLUNK_KOME/etc/system/local B. $SPLUNK_KCME/etc/system/default C. $SPLUNK_HCME/etc/apps/app1/local 
-D. $SPLUNK HCME/etc/users/admin/local 
+- **$SFLUNK_KOME/etc/system/local**
+- $SPLUNK_KCME/etc/system/default
+- $SPLUNK_HCME/etc/apps/app1/local 
+- $SPLUNK HCME/etc/users/admin/local 
 
-Question #:55 
+### Question #:55 
 Which Splunk component distributes apps and certain other configuration updates to search head cluster members? 
-A. Deployer B. Cluster master C. Deployment server D. Search head cluster master 
+- **Deployer**
+- Cluster master
+- Deployment server
+- Search head cluster master 
 
-Question #:56 
+### Question #:56 
 Which Splunk component requires a Forwarder license? 
-A. Search head B. Heavy forwarder C. Heaviest forwarder 
-D. Universal forwarder 
+- Search head
+- **Heavy forwarder**
+- Heaviest forwarder 
+- Universal forwarder 
 
-Question #:57 
+### Question #:57 
 Which parent directory contains the configuration files in Splunk? 
-A. SSFLUNK_KOME/etc B. SSPLUNK_HCME/var C. SSPLUNK_HOME/conf 
-D. SSPLUNK_HOME/default 
+- **$SPLUNK_HOME/etc**
+- $SPLUNK_HOME/var
+- $SPLUNK_HOME/conf 
+- $SPLUNK_HOME/default 
 
- Question #:58 
+### Question #:58 
 Which of the following enables compression for universal forwarders in outputs. conf ? 
-A) 
-￼
-B) 
-￼
-C) 
-￼
- 
-D)
-￼
- 
+￼```
+[tcpout]
+defaultGroupt = my_indexers
+compressed = true
+```
 
-Question #:59 
+### Question #:59 
 Which of the following authentication types requires scripting in Splunk? 
-A. ADFS 
-B. LDAP 
-C. SAML 
-D. RADIUS 
+- ADFS 
+- LDAP 
+- SAML 
+- **RADIUS **
 
-Question #:60 
-Where are license files stored? A. $SPLUNK_HOME/etc/secure B. $SPLUNK_HOME/etc/system C. $SPLUNK_HOME/etc/licenses D. $SPLUNK_HOME/etc/apps/licenses 
+### Question #:60 
+Where are license files stored?
+- $SPLUNK_HOME/etc/secure
+- $SPLUNK_HOME/etc/system
+- **$SPLUNK_HOME/etc/licenses**
+- $SPLUNK_HOME/etc/apps/licenses 
 
 ￼
  
