@@ -450,12 +450,12 @@ Which parent directory contains the configuration files in Splunk?
 - $SPLUNK_HOME/default 
 
 ### Question #:58 
-Which of the following enables compression for universal forwarders in outputs. conf ? 
-￼```
+Which of the following enables compression for universal forwarders in outputs. conf?
+￼``
 [tcpout]
 defaultGroupt = my_indexers
 compressed = true
-```
+``
 
 ### Question #:59 
 Which of the following authentication types requires scripting in Splunk? 
