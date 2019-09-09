@@ -470,8 +470,3 @@ Where are license files stored?
 - $SPLUNK_HOME/etc/system
 - **$SPLUNK_HOME/etc/licenses**
 - $SPLUNK_HOME/etc/apps/licenses 
-
-￼
- 
-
-
