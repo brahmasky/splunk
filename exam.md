@@ -288,25 +288,33 @@ What is the difference between the two wildcards ... and * for the monitor stanz
 - **\* matches anything in that specific directory path segment, whereas ... recurses through subdirectories as well.**
 - … matches anything in that specific directory path segment, whereas * recurses through subdirectories as well.
 
-Question #:37 
+### Question #:37 
 Which layers are involved in Splunk configuration file layering? (select all that apply) 
-A. App context B. User context C. Global context 
-D. Forwarder context 
+- **App context**
+- **User context**
+- **Global context**
+- Forwarder context 
 
-Question #:38 
+### Question #:38 
 What is the default character encoding used by Splunk during the input phase? 
-A. UTF-8  B. UTF-16  C. EBCDIC  D. ISO 8859 
+- **UTF-8**
+- UTF-16
+- EBCDIC
+- ISO 8859 
 
-Question #:39 
+### Question #:39 
 Which option accurately describes the purpose of the HTTP Event Collector (HEC)? 
-A. A token-based HTTP input that is secure and scalable and that requires the use of forwarders 
-B. A token-based HTTP input that is secure and scalable and that does not require the use of forwarders. 
-C. An agent-based HTTP input that is secure and scalable and that does not require the use of forwarders. 
-D. A token-based HTTP input that is insecure and non-scalable and that does not require the use of forwarders.  
-Question #:40 
+- A token-based HTTP input that is secure and scalable and that requires the use of forwarders 
+- **A token-based HTTP input that is secure and scalable and that does not require the use of forwarders.**
+- An agent-based HTTP input that is secure and scalable and that does not require the use of forwarders. 
+- A token-based HTTP input that is insecure and non-scalable and that does not require the use of forwarders.  
+
+### Question #:40 
 What are the minimum required settings when creating a network input in Splunk? 
-A. Protocol, port number B. Protocol, port, location C. Protocol, username, port 
-D. Protocol, IP. port number 
+- **Protocol, port number**
+- Protocol, port, location
+- Protocol, username, port 
+- Protocol, IP. port number 
 
 Question #:41 
 Which of the following are methods for adding inputs in Splunk? (select all that apply) 
