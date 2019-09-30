@@ -1,15 +1,17 @@
-### to get the Heavy Forwarder traffic volume
+### Heavy Forwarder traffic volume
 ```
 index=_internal sourcetype=splunkd group=tcpin_connections (connectionType=cooked OR connectionType=cookedSSL) fwdType=full guid=* 
 | eval dest_uri = host.":".destPort 
 | stats values(fwdType) as forwarder_type, latest(version) as version, values(arch) as arch, dc(dest_uri) as dest_count, values(os) as os, max(_time) as last_connected, sum(kb) as new_sum_kb, sparkline(avg(tcp_KBps), 1m) as avg_tcp_kbps_sparkline, avg(tcp_KBps) as avg_tcp_kbps, avg(tcp_eps) as avg_tcp_eps by hostname 
 ```
 
+```
 index=_internal sourcetype=splunkd group=tcpin_connections (connectionType=cooked OR connectionType=cookedSSL) fwdType=full guid=*
 | eval gb = kb/1024/1024
 | convert timeformat="%Y-%m-%d %H:%M:%S" ctime(_time) AS time
 | stats latest(version) as version, values(os) as os, max(time) as last_connected, sum(gb) as "Traffic(GB)", sparkline(avg(tcp_KBps), 1m) as avg_tcp_kbps_spark, avg(tcp_KBps) as avg_tcp_kbps, avg(tcp_eps) as avg_tcp_eps by hostname
 | addcoltotals "Traffic(GB)"
+```
 
 ### Forwarders connecting directly to indexer, both UF and HF
 ```
