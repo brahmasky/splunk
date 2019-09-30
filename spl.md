@@ -1,10 +1,9 @@
-# SPL useful for Splunk intelligence
-
-# to get the Heavy Forwarder traffic volume
+### to get the Heavy Forwarder traffic volume
+```
 index=_internal sourcetype=splunkd group=tcpin_connections (connectionType=cooked OR connectionType=cookedSSL) fwdType=full guid=* 
 | eval dest_uri = host.":".destPort 
 | stats values(fwdType) as forwarder_type, latest(version) as version, values(arch) as arch, dc(dest_uri) as dest_count, values(os) as os, max(_time) as last_connected, sum(kb) as new_sum_kb, sparkline(avg(tcp_KBps), 1m) as avg_tcp_kbps_sparkline, avg(tcp_KBps) as avg_tcp_kbps, avg(tcp_eps) as avg_tcp_eps by hostname 
-
+```
 
 index=_internal sourcetype=splunkd group=tcpin_connections (connectionType=cooked OR connectionType=cookedSSL) fwdType=full guid=*
 | eval gb = kb/1024/1024
@@ -12,7 +11,8 @@ index=_internal sourcetype=splunkd group=tcpin_connections (connectionType=cooke
 | stats latest(version) as version, values(os) as os, max(time) as last_connected, sum(gb) as "Traffic(GB)", sparkline(avg(tcp_KBps), 1m) as avg_tcp_kbps_spark, avg(tcp_KBps) as avg_tcp_kbps, avg(tcp_eps) as avg_tcp_eps by hostname
 | addcoltotals "Traffic(GB)"
 
-#Forwarders connecting directly to indexer, both UF and HF
+### Forwarders connecting directly to indexer, both UF and HF
+```
 index=_internal source=*metrics.log group=tcpin_connections 
     [ search index=_internal splunk_server=* earliest=-5m 
     | dedup splunk_server 
@@ -20,8 +20,10 @@ index=_internal source=*metrics.log group=tcpin_connections
     | fields host 
     | format] 
 | stats values(os) as os values(version) as version values(hostname) as hostname values(guid) as guid values(fwdType) as fwdType values(ssl) as ssl values(connectionType) as connectionType by sourceIp
+```
 
-#Fowarders connection
+### Fowarders connection
+```
 index=_internal  group=tcp*_connections   sourcetype=splunkd 
 | eval temp=split(lastIndexer,":") | eval forwardedtoport=mvindex(temp,1)
 | eval LastTime=strftime(_time, "%c") 
@@ -33,7 +35,7 @@ index=_internal  group=tcp*_connections   sourcetype=splunkd
 | stats max(kbps) as maxkbps avg(kbps) as avgkbps-fwd perc25(kbps) as perc25kbps-fwd median(kbps) as mediamkbps-fwd perc75(kbps) as perc75kbps-fwd perc90(kbps) as pertc90kbps-fwd by host | rename host as hostname]
 | foreach *kbps* [eval <<FIELD>>=round('<<FIELD>>', 5)]
 | search hostname=SOMEHOST
-
+```
 
 ### Data routing by cluster
 ```
@@ -42,14 +44,13 @@ index=_internal  group=tcpout_connections  tcp_KBps>0 host= <<HF_SERVER>>
 | timechart span=1m avg(tcp_KBps) by tcp_group
 ```
 
-### Logit Hourly License Usage 
+###  Hourly License Usage by pool
 ```
-index=_internal host=auirsspl015* source=*license_usage.log* type=Usage 
+index=_internal host=<<LM_SERVER>>* source=*license_usage.log* type=Usage 
 | eval GB = round(b/1024/1024/1024,5) 
-| eval platform=if(pool == "logit-aws", "AWS", "legacy")
-| timechart usenull=f span=1h sum(GB) as GB by platform
+| eval platform=pool
+| timechart usenull=f span=1h sum(GB) as GB by pool
 | addtotals
-| eval percent = AWS/Total
 ```
 
 ### connection to indexers
