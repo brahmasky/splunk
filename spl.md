@@ -105,3 +105,13 @@ index=_audit (host="<<Search_Head>>) action=search (id=* OR search_id=*) search_
 | dedup search_id 
 | timechart span=1m avg(total_run_time)
 ```
+
+### cold voume usage
+```
+index=_introspection (host=<<INDEXERS>>*) component=Partitions 
+| spath output=capacity path=data.capacity 
+| spath output=available path=data.available 
+| eval utilised=100-(available/capacity*100) 
+| search *cold 
+| timechart span=1m max(utilised) as utilised_max p95(utilised) as utilised_p95 avg(utilised) as utilised_avg limit=100 by host
+```
