@@ -90,3 +90,18 @@ index=_internal sourcetype = splunkd host=* source=*splunkd.log blocked seconds
 | rex field=message "So far received events from (?<missing_indexes>\d+) missing"
 | where missing_indexes > 0
 ```
+
+### search performance
+```
+index=_audit (host="<<Search_Head>>) action=search (id=* OR search_id=*) search_id!="'subsearch*" search_id!="*scheduler*" info=completed 
+| eval search_id=if(isnull(search_id), id, search_id) 
+| replace '*' with * in search_id 
+| search search_id!=rt_* search_id!=searchparsetmp* 
+| rex "search='(?<search>.*?)', autojoin" 
+| rex "savedsearch_name=\"(?<savedsearch_name>.*?)\"\]\[" 
+| eval search=case(isnotnull(search),search,isnull(search) AND savedsearch_name!="","Scheduled search name : ".savedsearch_name,isnull(search) AND savedsearch_name=="","SID : ".search_id) 
+| eval user = if(user="n/a", "nobody", user) 
+| search search_id=* search!=typeahead* search!="|history*" search!=*_internal* search!=*_audit* 
+| dedup search_id 
+| timechart span=1m avg(total_run_time)
+```
