@@ -115,3 +115,9 @@ index=_introspection (host=<<INDEXERS>>*) component=Partitions
 | search *cold 
 | timechart span=1m max(utilised) as utilised_max p95(utilised) as utilised_p95 avg(utilised) as utilised_avg limit=100 by host
 ```
+
+### clients connected to DS
+```
+| rest splunk_server=<<DS>> /services/deployment/server/clients 
+| fields ip,clientName,hostname,instanceName,name,guid
+```
