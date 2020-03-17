@@ -121,3 +121,9 @@ index=_introspection (host=<<INDEXERS>>*) component=Partitions
 | rest splunk_server=<<DS>> /services/deployment/server/clients 
 | fields ip,clientName,hostname,instanceName,name,guid
 ```
+
+
+### indexer performance 
+```
+https://<<SPLUNK>>/en-US/app/cluster_health_tools/indexer_performance?form.time.earliest=-3100s%40s&form.time.latest=now&form.refresh_rate_seconds=999999&form.show_table=| noop&form.show_debug=| noop&form.introspection=index%3D_introspection&form.internal=index%3D_internal&form.selected_field=avg_average_kbps&form.split_by=splunk_version&form.selected_bins=250&form.bubble_selected_field_x=avg_instantaneous_kbps&form.bubble_selected_field_y=avg_search_concurrency&form.bubble_selected_field_size=avg_normalized_load_avg_1min&form.bubble_split_by=site_id&form.bar_kpi=avg_normalized_load_avg_1min&form.bar_aggregation_function=count&form.bar_split_by=splunk_version 
+```
