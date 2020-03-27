@@ -131,6 +131,6 @@ https://<<SPLUNK>>/en-US/app/cluster_health_tools/indexer_performance?form.time.
 ### searching keyword in saved searches
 ```
 | rest /services/configs/conf-savedsearches
-| search search="*| transpose *"
+| search search="*<<KEYWORD>>*"
 | table title, "eai:userName", "eai:appName", search
 ```
