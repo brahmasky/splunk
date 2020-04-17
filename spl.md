@@ -130,7 +130,7 @@ https://<<SPLUNK>>/en-US/app/cluster_health_tools/indexer_performance?form.time.
 
 ### searching keyword in saved searches
 ```
-| rest /services/configs/conf-savedsearches
+| rest splunk_server=local /servicesNS/-/-/saved/searches
 | search search="*<<KEYWORD>>*"
-| table title, "eai:userName", "eai:appName", search
+| table title, author, eai:acl.app search
 ```
