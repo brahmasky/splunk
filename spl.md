@@ -134,3 +134,10 @@ https://<<SPLUNK>>/en-US/app/cluster_health_tools/indexer_performance?form.time.
 | search search="*<<KEYWORD>>*"
 | table title, author, eai:acl.app search
 ```
+
+### checking data time range
+```
+| tstats count earliest(_time) as first_accessed, latest(_time) as last_accessed where index=_introspection 
+| eval days=round((last_accessed-first_accessed)/3600/24,1)
+| eval last_accessed=strftime(last_accessed,"%+"), first_accessed=strftime(first_accessed,"%+")
+```
