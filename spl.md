@@ -141,3 +141,10 @@ https://<<SPLUNK>>/en-US/app/cluster_health_tools/indexer_performance?form.time.
 | eval days=round((last_accessed-first_accessed)/3600/24,1)
 | eval last_accessed=strftime(last_accessed,"%+"), first_accessed=strftime(first_accessed,"%+")
 ```
+
+### cpu util by search group
+```
+index=_introspection host=<<IDX>> component=PerProcess "data.search_props.provenance"=scheduler
+| rex field=data.search_props.label "^_?(?<groups>[^_\s\.]+)"
+| timechart usenull=f span=1h avg(data.normalized_pct_cpu) by groups limit=100
+```
