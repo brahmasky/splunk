@@ -1,0 +1,131 @@
+<form theme="dark">
+  <label>SH Health Overview</label>
+  <search id="search_performance">
+    <query>index=_audit sourcetype=audittrail host IN $shc$  
+    action=search info=completed (id=* OR search_id=*) search_id!="'subsearch*" 
+| fields + search_id,host,total_run_time,search,savedsearch_name 
+| eval search_id=if(isnull(search_id), id, search_id) 
+| replace '*' with * in search_id 
+| eval search=case(isnotnull(search),search,isnull(search) AND savedsearch_name!="","Scheduled search name : ".savedsearch_name,isnull(search) AND savedsearch_name=="","SID : ".search_id) 
+| search search_id=* search!=typeahead* search!="|history*" search!=*_internal* search!=*_audit* 
+| dedup search_id
+</query>
+    <earliest>$time_token.earliest$</earliest>
+    <latest>$time_token.latest$</latest>
+  </search>
+  <fieldset submitButton="false">
+    <input type="time" token="time_token" searchWhenChanged="true">
+      <label></label>
+      <default>
+        <earliest>-4h@m</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+    <input type="dropdown" token="shc">
+      <label>SH Cluster</label>
+      <choice value="(SHC01_HOSTS)">SHC01</choice>
+      <choice value="(SHC02_HOSTS)">SHC02</choice>
+      <choice value="(SHC03_HOSTS)">SHC03</choice>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <chart>
+        <title>Search Runs - Users</title>
+        <search base="search_performance">
+          <query>| search search_id!="*scheduler*" 
+| timechart span=5m count by host</query>
+        </search>
+        <option name="charting.chart">line</option>
+        <option name="charting.drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+    <panel>
+      <chart>
+        <title>Search Runs - Scheduled </title>
+        <search base="search_performance">
+          <query>| search search_id="*scheduler*" 
+| timechart span=5m count by host</query>
+        </search>
+        <option name="charting.chart">line</option>
+        <option name="charting.drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <chart>
+        <title>Search  Performance - User</title>
+        <search base="search_performance">
+          <query>| search search_id!="*scheduler*" 
+| timechart span=5m avg(total_run_time) as avg_time by host</query>
+        </search>
+        <option name="charting.chart">line</option>
+        <option name="charting.drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+    <panel>
+      <chart>
+        <title>Search  Performance - Scheduled</title>
+        <search base="search_performance">
+          <query>|search search_id="*scheduler*" 
+| timechart span=5m avg(total_run_time) as avg_time by host</query>
+        </search>
+        <option name="charting.chart">line</option>
+        <option name="charting.drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <chart>
+        <title>Skipping ratios</title>
+        <search>
+          <query>index=_internal host IN $shc$
+    sourcetype=scheduler (status="completed" OR status="success" OR status="skipped" OR status="continued" OR
+    status="deferred")
+| timechart span=5m count by status 
+| addtotals 
+| eval skipped_perc = round((skipped/Total),5)*100 
+| rename skipped_perc as "% of Skipped Searches"
+| fields - Total</query>
+          <earliest>$time_token.earliest$</earliest>
+          <latest>$time_token.latest$</latest>
+        </search>
+        <option name="charting.axisY2.abbreviation">none</option>
+        <option name="charting.axisY2.enabled">1</option>
+        <option name="charting.chart">area</option>
+        <option name="charting.chart.overlayFields">"% of Skipped Searches"</option>
+        <option name="charting.drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+    <panel>
+      <chart>
+        <title>CPU Usage</title>
+        <search>
+          <query>index=_introspection host IN $shc$ component=Hostwide
+| spath output=cpuIdle path=data.cpu_idle_pct
+| eval CPUUsage=100-cpuIdle
+| timechart limit=20 span=5m avg(CPUUsage) by host</query>
+          <earliest>$time_token.earliest$</earliest>
+          <latest>$time_token.latest$</latest>
+        </search>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisY2.enabled">1</option>
+        <option name="charting.chart">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.drilldown">all</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.legend.placement">right</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+  </row>
+</form>
