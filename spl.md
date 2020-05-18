@@ -148,3 +148,14 @@ index=_introspection host=<<IDX>> component=PerProcess "data.search_props.proven
 | rex field=data.search_props.label "^_?(?<groups>[^_\s\.]+)"
 | timechart usenull=f span=1h avg(data.normalized_pct_cpu) by groups limit=100
 ```
+
+### DMA usage on ES
+```
+| rest splunk_server=local /services/saved/searches 
+| where match('action.correlationsearch.enabled', "1") 
+| where match('disabled', "0") 
+| rename eai:acl.app as app, title as csearch_name, action.correlationsearch.label as csearch_label, action.notable.param.security_domain as security_domain 
+| fields csearch_name, csearch_label, app, security_domain, cron_schedule, search
+| rex field=search "datamodel\s*=[^\w\*]*(?<dm_name>[\w]+)"
+| stats values(csearch_name) by dm_name
+```
