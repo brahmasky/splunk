@@ -24,12 +24,6 @@ def add_index(idx_name, is_metric, is_custom):
   
   idx_config = read_file(idx_file)
 
-  # [a0_pay_npp_audit_001_stg]
-  # frozenTimePeriodInSecs = 34190000
-  # coldPath = volume:cold/a0_pay_npp_audit_001_stg/colddb
-  # homePath = volume:hot_warm/a0_pay_npp_audit_001_stg/db
-  # thawedPath = /opt/splunkdata/cold/a0_pay_npp_audit_001_stg/thaweddb
-
   if not idx_config.has_section(idx_name):
     idx_config.add_section(idx_name)
     idx_config.set(idx_name,'homePath',home_path)
