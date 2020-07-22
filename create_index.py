@@ -41,11 +41,11 @@ def add_index(idx_name, is_metric, is_custom):
   return updated
 
 
-#sample stg_indexes_test.csv
-"stg_idx","stg_metric","stg_path"
-"index01",FALSE,"indexes_standard_retention"
-"index02",TRUE,"indexes_standard_retention"
-"index03",FALSE,"indexes_custom_retention"
+# sample stg_indexes_test.csv
+# "stg_idx","stg_metric","stg_path"
+# "index01",FALSE,"indexes_standard_retention"
+# "index02",TRUE,"indexes_standard_retention"
+# "index03",FALSE,"indexes_custom_retention"
 
 
 with open('./stg_indexes_test.csv') as csv_file:
