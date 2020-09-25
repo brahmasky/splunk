@@ -22,3 +22,8 @@ curl  http://localhost:8088/services/collector/event -H "Authorization: Splunk 1
 
 
 |rest splunk_server=<<SH>> serviceNS/-/-/configs/conf-server
+
+
+# update conf file property
+curl -k -u admin:<PWD> https://localhost:8089/servicesNS/nobody/myapp/configs/conf-default-mode/ -d name=pipeline:scheduler -d disabled=true
+curl -k -u admin:<PWD> --request DELETE https://localhost:8089/servicesNS/nobody/myapp/configs/conf-default-mode/pipeline:scheduler
