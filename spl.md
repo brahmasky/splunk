@@ -177,10 +177,12 @@ index=_audit action=search TERM(lookup)
     | rename file as lookup_name 
     | fields lookup_name filetype app sizeMB
         ] 
-| stats values(file) as file dc(file) as files values(sizeMB) as sizeMB values(app) as app values(filetype) as filetype values(usedlookupCount) as usedlookupCount values(host) as hosts by lookup_name 
+| stats values(file) as file dc(file) as files values(sizeMB) as sizeMB values(app) as app values(filetype) as filetype values(usedlookupCount) as usedlookupCount by lookup_name 
 | fillnull value=0 file usedlookupCount 
 | search usedlookupCount < 1 
 | eventstats sum(sizeMB) as TotalUnusedSize 
 | eval UnusedContributionPct = round((sizeMB/TotalUnusedSize),5) 
 | sort – UnusedContributionPct
 ```
+
+
