@@ -159,3 +159,28 @@ index=_introspection host=<<IDX>> component=PerProcess "data.search_props.proven
 | rex field=search "datamodel\s*=[^\w\*]*(?<dm_name>[\w]+)"
 | stats values(csearch_name) by dm_name
 ```
+
+### check lookup files not in use for x number of days
+```
+index=_audit action=search TERM(lookup) 
+| rex field=search "\|\s*(lookup|inputlookup)\b\s*(?<lookup_name>[a-zA-Z0-9_\\.\-\(\):]+)" 
+| stats count as usedlookupCount max(_time) as _time by host lookup_name 
+| append 
+    [| rest servicesNS/-/-/data/lookup-table-files 
+    | rename eai:appName as app, eai:acl.sharing as permission, eai:data as file, eai:userName as user, title as lookup_name 
+    | fields app lookup_name permission file user updated ] 
+| append 
+    [| rest splunk_server=local services/search/distributed/bundle-replication-files 
+    | explorebundle 
+    | eval exFiletype = if(in(filetype,"py","pyc","conf","tsidx","pre-tsidx","pyo","meta","README"),0,1) 
+    | search exFiletype = 1 
+    | rename file as lookup_name 
+    | fields lookup_name filetype app sizeMB
+        ] 
+| stats values(file) as file dc(file) as files values(sizeMB) as sizeMB values(app) as app values(filetype) as filetype values(usedlookupCount) as usedlookupCount value(host) as hosts by lookup_name 
+| fillnull value=0 file usedlookupCount 
+| search usedlookupCount < 1 
+| eventstats sum(sizeMB) as TotalUnusedSize 
+| eval UnusedContributionPct = round((sizeMB/TotalUnusedSize),5) 
+| sort – UnusedContributionPct
+```
