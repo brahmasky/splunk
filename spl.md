@@ -162,27 +162,39 @@ index=_introspection host=<<IDX>> component=PerProcess "data.search_props.proven
 
 ### check lookup files not in use for x number of days
 ```
-index=_audit action=search TERM(lookup) 
-| rex field=search "\|\s*(lookup|inputlookup)\b\s*(?<lookup_name>[a-zA-Z0-9_\\.\-\(\):]+)" 
-| stats count as usedlookupCount max(_time) as _time by host lookup_name 
+| rest splunk_server=local servicesNS/-/-/data/lookup-table-files 
+| search eai:appName !=TA-* AND eai:appName !=Splunk_TA_* 
+| eval filename = title 
+| rename eai:appName as app, eai:acl.sharing as permission, eai:data as file, eai:userName as user, title as lookup_name 
+| eval jField=filename.app 
+| fields lookup_name filename jField app user file 
 | append 
-    [| rest servicesNS/-/-/data/lookup-table-files 
-    | rename eai:appName as app, eai:acl.sharing as permission, eai:data as file, eai:userName as user, title as lookup_name 
-    | fields app lookup_name permission file user updated ] 
+    [| rest splunk_server=local servicesNS/-/-/data/transforms/lookups 
+    | rename title as lookup_name eai:acl.app as app 
+    | search type=file AND app !=TA-* AND app !=Splunk_TA_* 
+    | fields lookup_name filename app 
+    | eval jField = filename.app
+        ] 
 | append 
     [| rest splunk_server=local services/search/distributed/bundle-replication-files 
     | explorebundle 
-    | eval exFiletype = if(in(filetype,"py","pyc","conf","tsidx","pre-tsidx","pyo","meta","README"),0,1) 
+    | eval exFiletype = if( in(filetype,"py","pyc","conf","tsidx","pre-tsidx","pyo","meta","README","key","val"),0,1) 
     | search exFiletype = 1 
-    | rename file as lookup_name 
-    | fields lookup_name filetype app sizeMB
+    | rename file as filename 
+    | eval jField = filename.app 
+    | fields sizeMB jField filetype ] 
+| stats values(lookup_name) as lookup_name values(app) as app values(filename) as filename values(sizeMB) as sizeMB values(filetype) as filetype values(user) as user values(file) as file by jField 
+| fields - jField 
+| append 
+    [ search index=_audit (host=<<SHC_MEMBER>>) action=search TERM(lookup) 
+    | rex max_match=10 field=search "\|\s*(lookup|inputlookup)\b\s*(?<lookup_name>[a-zA-Z0-9_\\.\-\(\):]+)\b" 
+    | stats count as usedlookupCount by lookup_name
         ] 
-| stats values(file) as file dc(file) as files values(sizeMB) as sizeMB values(app) as app values(filetype) as filetype values(usedlookupCount) as usedlookupCount by lookup_name 
+| stats values(file) as file values(sizeMB) as sizeMB values(app) as app values(filetype) as filetype values(usedlookupCount) as usedlookupCount values(user) as user values(filename) as filename by lookup_name 
 | fillnull value=0 file usedlookupCount 
-| search usedlookupCount < 1 
-| eventstats sum(sizeMB) as TotalUnusedSize 
-| eval UnusedContributionPct = round((sizeMB/TotalUnusedSize),5) 
-| sort – UnusedContributionPct
+| eventstats sum(usedlookupCount) as UC by filename 
+| search UC < 1 
+| eventstats sum(sizeMB) as TotalUnusedSize
 ```
 
 
